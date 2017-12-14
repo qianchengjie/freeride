@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="freeride:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="maven-springmvc.war">
+      <element id="artifact" artifact-name="freeride:war exploded" />
+    </root>
+  </artifact>
+</component>
