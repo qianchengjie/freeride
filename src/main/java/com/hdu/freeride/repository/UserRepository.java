@@ -7,10 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: 33061
- * Date: 2017/12/14
- * Time: 14:49
+ * Author: XiaoXiaoQian
+ * Description:
+ * Date: 2017/12/14 18:20
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {

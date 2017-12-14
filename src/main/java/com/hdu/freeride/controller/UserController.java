@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
- * Created by IntelliJ IDEA.
- * User: 33061
- * Date: 2017/12/14
- * Time: 14:49
+ * Author: XiaoXiaoQian
+ * Description:
+ * Date: 2017/12/14 18:20
  */
 @RestController
 @RequestMapping("/user")

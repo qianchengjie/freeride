@@ -1,10 +1,9 @@
 package com.hdu.freeride.enums;
 
 /**
- * Created by IntelliJ IDEA.
- * User: 33061
- * Date: 2017/12/14
- * Time: 14:49
+ * Author: XiaoXiaoQian
+ * Description:
+ * Date: 2017/12/14 18:20
  */
 public enum ResultEnum {
     UNKNOW_ERROR(-1, "未知错误"),
