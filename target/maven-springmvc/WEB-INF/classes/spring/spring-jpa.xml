@@ -12,7 +12,7 @@
           http://www.springframework.org/schema/data/jpa
           http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd">
 
-
+    <!-- 配置数据源，用于连接数据库-->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="username" value="root"/>
@@ -20,13 +20,14 @@
         <property name="url"  value="jdbc:mysql://localhost:3306/freeride?useSSL=false"/>
     </bean>
 
+    <!-- 配置实体管理器工厂-->
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
         </property>
         <property name="packagesToScan" value="com.hdu.freeride.entity" />
-
+        <!-- 配置jpa-->
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.ejb.implicit_naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
@@ -38,13 +39,13 @@
         </property>
     </bean>
 
+    <!-- 开启事务管理-->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
-
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
+    <!-- 扫描repository包-->
     <jpa:repositories base-package="com.hdu.freeride.repository" entity-manager-factory-ref="entityManagerFactory" />
 
-    <context:component-scan base-package="com.hdu.freeride" />
 </beans>

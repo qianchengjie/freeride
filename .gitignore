@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+
+# IntelliJ project files
+.idea
+*.iml
+src/test
+out
+gen
+target/generated-sources/
+target/generated-test-sources/
+target/maven-springmvc/WEB-INF/classes/com/hdu/freeride/entity/freeride/
+target/maven-springmvc/WEB-INF/classes/com/hdu/freeride/exception/java/
+target/test-classes/
