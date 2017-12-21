@@ -49,7 +49,7 @@ public class UserService {
         } else if (userRepository.findByPhone(user.getPhone()) != null) {
             throw new MyException("手机号已存在");
         }
-        user.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm;ss").format(new Date()));
+        user.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
         String md5Pwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
         user.setPassword(md5Pwd);
@@ -80,7 +80,7 @@ public class UserService {
      * @param id
      * @return
      */
-    public User find(int id) {
+    public User findOne(int id) {
         return userRepository.findOne(id);
     }
 

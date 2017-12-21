@@ -1,7 +1,6 @@
 package com.hdu.freeride.service;
 
-import com.hdu.freeride.entity.User;
-import com.hdu.freeride.exception.MyException;
+import com.hdu.freeride.entity.Role;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,28 +9,22 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: 33061
- * Date: 2017/12/14
- * Time: 16:59
+ * Author: XiaoXiaoQian
+ * Description:
+ * Date: 2017/12/18 19:15
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/spring/spring-mvc.xml", "/spring/spring-jpa.xml"})
-public class UserServiceTest {
+public class PermissionsServiceTest {
 
     @Resource
-    private UserService userService;
+    private PermissionsService permissionsService;
 
     @Test
     public void test() {
-        User user = new User();
-        user.setPassword("132456asd");
-        user.setName("hahah");
-        user.setPhone("18667332212");
-        System.out.println( userService.register(user).toString());
+        permissionsService.revocationUserRole(20, Role.ADMIN);
     }
 
 }

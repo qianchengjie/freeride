@@ -3,19 +3,21 @@ package com.hdu.freeride.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "transaction_details", schema = "freeride", catalog = "")
+@Table(name = "transaction_details")
 public class TransactionDetails {
-    private int id;
-    private double sum;
-    private int userId;
-    private Integer strokeId;
-    private String desc;
-    private String date;
-    private byte type;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    private int id;
+    private double sum;
+    @Column(name = "user_id")
+    private int userId;
+    @Column(name = "stroke_id")
+    private Integer strokeId;
+    private String desc;
+    private String date;
+    private Integer type;
+
     public int getId() {
         return id;
     }
@@ -24,8 +26,6 @@ public class TransactionDetails {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "sum")
     public double getSum() {
         return sum;
     }
@@ -34,8 +34,6 @@ public class TransactionDetails {
         this.sum = sum;
     }
 
-    @Basic
-    @Column(name = "user_id")
     public int getUserId() {
         return userId;
     }
@@ -44,8 +42,6 @@ public class TransactionDetails {
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "stroke_id")
     public Integer getStrokeId() {
         return strokeId;
     }
@@ -54,8 +50,6 @@ public class TransactionDetails {
         this.strokeId = strokeId;
     }
 
-    @Basic
-    @Column(name = "desc")
     public String getDesc() {
         return desc;
     }
@@ -64,8 +58,6 @@ public class TransactionDetails {
         this.desc = desc;
     }
 
-    @Basic
-    @Column(name = "date")
     public String getDate() {
         return date;
     }
@@ -74,13 +66,11 @@ public class TransactionDetails {
         this.date = date;
     }
 
-    @Basic
-    @Column(name = "type")
-    public byte getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(byte type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -94,7 +84,7 @@ public class TransactionDetails {
         if (id != that.id) return false;
         if (Double.compare(that.sum, sum) != 0) return false;
         if (userId != that.userId) return false;
-        if (type != that.type) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
         if (strokeId != null ? !strokeId.equals(that.strokeId) : that.strokeId != null) return false;
         if (desc != null ? !desc.equals(that.desc) : that.desc != null) return false;
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
@@ -113,7 +103,7 @@ public class TransactionDetails {
         result = 31 * result + (strokeId != null ? strokeId.hashCode() : 0);
         result = 31 * result + (desc != null ? desc.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (int) type;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         return result;
     }
 }

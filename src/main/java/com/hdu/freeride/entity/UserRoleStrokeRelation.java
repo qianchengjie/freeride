@@ -1,18 +1,25 @@
 package com.hdu.freeride.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "user_role_stroke_relation", schema = "freeride", catalog = "")
+@Table(name = "user_role_stroke_relation")
 public class UserRoleStrokeRelation {
-    private int id;
-    private int userId;
-    private int roleId;
-    private int strokeId;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    private int id;
+    @NotNull
+    @Column(name = "user_id")
+    private int userId;
+    @NotNull
+    @Column(name = "role_id")
+    private int roleId;
+    @NotNull
+    @Column(name = "stroke_id")
+    private int strokeId;
+
     public int getId() {
         return id;
     }
@@ -21,8 +28,6 @@ public class UserRoleStrokeRelation {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "user_id")
     public int getUserId() {
         return userId;
     }
@@ -31,8 +36,6 @@ public class UserRoleStrokeRelation {
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "role_id")
     public int getRoleId() {
         return roleId;
     }
@@ -41,8 +44,6 @@ public class UserRoleStrokeRelation {
         this.roleId = roleId;
     }
 
-    @Basic
-    @Column(name = "stroke_id")
     public int getStrokeId() {
         return strokeId;
     }

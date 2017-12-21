@@ -4,10 +4,16 @@ import javax.persistence.*;
 
 @Entity
 public class Right {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
+    @Column(name = "right_name")
     private String rightName;
+    @Column(name = "right_desc")
     private String rightDesc;
     private String date;
+    @Column(name = "p_id")
     private int pId;
 
 
@@ -17,9 +23,6 @@ public class Right {
     private static final int CALL_RIGHT = 4;
     private static final int TAKE_RIGHT = 5;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     public int getId() {
         return id;
     }
@@ -28,8 +31,6 @@ public class Right {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "right_name")
     public String getRightName() {
         return rightName;
     }
@@ -38,8 +39,6 @@ public class Right {
         this.rightName = rightName;
     }
 
-    @Basic
-    @Column(name = "right_desc")
     public String getRightDesc() {
         return rightDesc;
     }
@@ -48,8 +47,6 @@ public class Right {
         this.rightDesc = rightDesc;
     }
 
-    @Basic
-    @Column(name = "date")
     public String getDate() {
         return date;
     }
@@ -58,8 +55,6 @@ public class Right {
         this.date = date;
     }
 
-    @Basic
-    @Column(name = "p_id")
     public int getpId() {
         return pId;
     }

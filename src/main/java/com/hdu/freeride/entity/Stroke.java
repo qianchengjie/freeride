@@ -1,21 +1,39 @@
 package com.hdu.freeride.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Stroke {
-    private int id;
-    private String start;
-    private String end;
-    private double price;
-    private byte status;
-    private byte amount;
-    private String beginTime;
-    private String finishTime;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    private int id;
+    @NotNull
+    private String start;
+    @NotNull
+    private String end;
+    @NotNull
+    private double price;
+    private Integer status;
+    @NotNull
+    private Integer amount;
+    @NotNull
+    @Column(name = "begin_time")
+    private String beginTime;
+    @Column(name = "create_time")
+    private String createTime;
+    @Column(name = "finish_time")
+    private String finishTime;
+
+    //0等待接单,1已接单，2行程中,3已结单，4订单已取消
+    public static final Integer STATUS_WAIT = 0;
+    public static final Integer STATUS_TAKING = 1;
+    public static final Integer STATUS_ONWAY = 2;
+    public static final Integer STATUS_FINISH = 3;
+    public static final Integer STATUS_CANCEL = 4;
+
+
     public int getId() {
         return id;
     }
@@ -24,8 +42,6 @@ public class Stroke {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "start")
     public String getStart() {
         return start;
     }
@@ -34,8 +50,6 @@ public class Stroke {
         this.start = start;
     }
 
-    @Basic
-    @Column(name = "end")
     public String getEnd() {
         return end;
     }
@@ -44,8 +58,6 @@ public class Stroke {
         this.end = end;
     }
 
-    @Basic
-    @Column(name = "price")
     public double getPrice() {
         return price;
     }
@@ -54,28 +66,22 @@ public class Stroke {
         this.price = price;
     }
 
-    @Basic
-    @Column(name = "status")
-    public byte getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(byte status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    @Basic
-    @Column(name = "amount")
-    public byte getAmount() {
-        return amount;
+    public Integer getAmount(){
+        return this.amount;
     }
 
-    public void setAmount(byte amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
     }
 
-    @Basic
-    @Column(name = "begin_time")
     public String getBeginTime() {
         return beginTime;
     }
@@ -84,14 +90,20 @@ public class Stroke {
         this.beginTime = beginTime;
     }
 
-    @Basic
-    @Column(name = "finish_time")
     public String getFinishTime() {
         return finishTime;
     }
 
     public void setFinishTime(String finishTime) {
         this.finishTime = finishTime;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     @Override
@@ -103,12 +115,13 @@ public class Stroke {
 
         if (id != stroke.id) return false;
         if (Double.compare(stroke.price, price) != 0) return false;
-        if (status != stroke.status) return false;
-        if (amount != stroke.amount) return false;
+        if (status != null ? !status.equals(stroke.status) : stroke.status != null) return false;
+        if (amount != null ? !amount.equals(stroke.amount) : stroke.amount != null) return false;
         if (start != null ? !start.equals(stroke.start) : stroke.start != null) return false;
         if (end != null ? !end.equals(stroke.end) : stroke.end != null) return false;
         if (beginTime != null ? !beginTime.equals(stroke.beginTime) : stroke.beginTime != null) return false;
         if (finishTime != null ? !finishTime.equals(stroke.finishTime) : stroke.finishTime != null) return false;
+        if (createTime != null ? !createTime.equals(stroke.createTime) : stroke.createTime != null) return false;
 
         return true;
     }
@@ -122,10 +135,27 @@ public class Stroke {
         result = 31 * result + (end != null ? end.hashCode() : 0);
         temp = Double.doubleToLongBits(price);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (int) status;
-        result = 31 * result + (int) amount;
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (amount != null ? amount.hashCode() : 0);
+        result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
         result = 31 * result + (beginTime != null ? beginTime.hashCode() : 0);
         result = 31 * result + (finishTime != null ? finishTime.hashCode() : 0);
+        result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Stroke{" +
+                "id=" + id +
+                ", start='" + start + '\'' +
+                ", end='" + end + '\'' +
+                ", price=" + price +
+                ", status=" + status +
+                ", amount=" + amount +
+                ", beginTime='" + beginTime + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", finishTime='" + finishTime + '\'' +
+                '}';
     }
 }

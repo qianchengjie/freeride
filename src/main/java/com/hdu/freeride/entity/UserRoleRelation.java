@@ -3,15 +3,17 @@ package com.hdu.freeride.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_role_relation", schema = "freeride", catalog = "")
+@Table(name = "user_role_relation")
 public class UserRoleRelation {
-    private int id;
-    private int userId;
-    private int roleId;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    private int id;
+    @Column(name = "user_id")
+    private int userId;
+    @Column(name = "role_id")
+    private int roleId;
+
     public int getId() {
         return id;
     }
@@ -20,8 +22,6 @@ public class UserRoleRelation {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "user_id")
     public int getUserId() {
         return userId;
     }
@@ -30,8 +30,6 @@ public class UserRoleRelation {
         this.userId = userId;
     }
 
-    @Basic
-    @Column(name = "role_id")
     public int getRoleId() {
         return roleId;
     }

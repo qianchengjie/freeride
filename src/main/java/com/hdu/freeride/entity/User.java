@@ -9,6 +9,9 @@ import javax.validation.constraints.Size;
 
 @Entity
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
     @NotNull(message = "用户名不能为空")
     @Pattern(regexp = "^.{2,8}$", message = "用户名长度2-8位")
@@ -16,21 +19,21 @@ public class User {
     @NotNull(message = "密码不能为空")
     private String password;
     private Integer age;
+    @Column(name = "nike_name")
     private String nikeName;
     @NotNull(message = "手机号不能为空")
     @Pattern(regexp = "^1[3|4|5|8][0-9]\\d{8}$", message = "请填写正确的手机号")
     private String phone;
+    @Column(name = "person_sign")
     private String personSign;
     private String industry;
     private String date;
     private double purse;
-    private byte status;
+    private Integer status;
     private String msg;
+    @Column(name = "head_img")
     private String headImg;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     public int getId() {
         return id;
     }
@@ -39,8 +42,6 @@ public class User {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -49,8 +50,6 @@ public class User {
         this.name = name;
     }
 
-    @Basic
-    @Column(name = "password")
     public String getPassword() {
         return password;
     }
@@ -59,8 +58,6 @@ public class User {
         this.password = password;
     }
 
-    @Basic
-    @Column(name = "age")
     public Integer getAge() {
         return age;
     }
@@ -69,8 +66,6 @@ public class User {
         this.age = age;
     }
 
-    @Basic
-    @Column(name = "nike_name")
     public String getNikeName() {
         return nikeName;
     }
@@ -79,8 +74,6 @@ public class User {
         this.nikeName = nikeName;
     }
 
-    @Basic
-    @Column(name = "phone")
     public String getPhone() {
         return phone;
     }
@@ -89,8 +82,6 @@ public class User {
         this.phone = phone;
     }
 
-    @Basic
-    @Column(name = "person_sign")
     public String getPersonSign() {
         return personSign;
     }
@@ -99,8 +90,6 @@ public class User {
         this.personSign = personSign;
     }
 
-    @Basic
-    @Column(name = "industry")
     public String getIndustry() {
         return industry;
     }
@@ -109,8 +98,6 @@ public class User {
         this.industry = industry;
     }
 
-    @Basic
-    @Column(name = "date")
     public String getDate() {
         return date;
     }
@@ -119,8 +106,6 @@ public class User {
         this.date = date;
     }
 
-    @Basic
-    @Column(name = "purse")
     public double getPurse() {
         return purse;
     }
@@ -129,18 +114,14 @@ public class User {
         this.purse = purse;
     }
 
-    @Basic
-    @Column(name = "status")
-    public byte getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(byte status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    @Basic
-    @Column(name = "msg")
     public String getMsg() {
         return msg;
     }
@@ -149,8 +130,6 @@ public class User {
         this.msg = msg;
     }
 
-    @Basic
-    @Column(name = "head_img")
     public String getHeadImg() {
         return headImg;
     }
@@ -168,7 +147,7 @@ public class User {
 
         if (id != user.id) return false;
         if (Double.compare(user.purse, purse) != 0) return false;
-        if (status != user.status) return false;
+        if (status != null ? !status.equals(user.age) : user.status != null) return false;
         if (name != null ? !name.equals(user.name) : user.name != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
         if (age != null ? !age.equals(user.age) : user.age != null) return false;
@@ -198,7 +177,7 @@ public class User {
         result = 31 * result + (date != null ? date.hashCode() : 0);
         temp = Double.doubleToLongBits(purse);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (int) status;
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (msg != null ? msg.hashCode() : 0);
         return result;
     }

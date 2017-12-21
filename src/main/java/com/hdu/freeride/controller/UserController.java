@@ -94,8 +94,11 @@ public class UserController {
      * @return
      */
     @GetMapping("/find")
-    public Object find(int id) {
-        return ResultUtil.success(userService.find(id));
+    public Object find(Integer id) {
+        if (id == null) {
+            return ResultUtil.error("用户id不能为空");
+        }
+        return ResultUtil.success(userService.findOne(id));
     }
 
     /**

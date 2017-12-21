@@ -4,20 +4,24 @@ import javax.persistence.*;
 
 @Entity
 public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
+    @Column(name = "role_name")
     private String roleName;
+    @Column(name = "role_desc")
     private String roleDesc;
     private String date;
+    @Column(name = "p_id")
     private int pId;
 
+    //1超级管理员，2管理员，3司机，4乘客
     public static final int SUPERADMIN = 1;
     public static final int ADMIN = 2;
     public static final int DRIVER = 3;
     public static final int PASSENGER = 4;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     public int getId() {
         return id;
     }
@@ -26,8 +30,6 @@ public class Role {
         this.id = id;
     }
 
-    @Basic
-    @Column(name = "role_name")
     public String getRoleName() {
         return roleName;
     }
@@ -36,8 +38,6 @@ public class Role {
         this.roleName = roleName;
     }
 
-    @Basic
-    @Column(name = "role_desc")
     public String getRoleDesc() {
         return roleDesc;
     }
@@ -46,8 +46,6 @@ public class Role {
         this.roleDesc = roleDesc;
     }
 
-    @Basic
-    @Column(name = "date")
     public String getDate() {
         return date;
     }
@@ -56,8 +54,6 @@ public class Role {
         this.date = date;
     }
 
-    @Basic
-    @Column(name = "p_id")
     public int getpId() {
         return pId;
     }
