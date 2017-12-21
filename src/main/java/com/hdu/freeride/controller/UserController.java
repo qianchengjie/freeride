@@ -3,6 +3,7 @@ package com.hdu.freeride.controller;
 import com.hdu.freeride.service.UserService;
 import com.hdu.freeride.entity.User;
 import com.hdu.freeride.util.ResultUtil;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +29,28 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
-    public Object add(@Valid User user, BindingResult bindingResult) {
+    public Object register(@Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResultUtil.error(bindingResult);
         }
-        return ResultUtil.success(userService.save(user));
+        return ResultUtil.success(userService.register(user));
     }
+
+    /**
+     * 用户通过用户名和密码或者手机号和密码登录
+     * @param name
+     * @param phone
+     * @param password
+     * @return
+     */
+    @PostMapping("/login")
+    public Object login(@RequestParam(name = "name", defaultValue = "") String name,
+                        @RequestParam(name = "phone", defaultValue = "") String phone,
+                        String password) {
+        return ResultUtil.success(userService.login(name, phone, password));
+    }
+
+
 
     /**
      * 用户信息更新

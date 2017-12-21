@@ -2,9 +2,7 @@
 
 
 # IntelliJ project files
-.idea
 *.iml
-src/test
 out
 gen
 target/generated-sources/

@@ -10,6 +10,11 @@ public class Role {
     private String date;
     private int pId;
 
+    public static final int SUPERADMIN = 1;
+    public static final int ADMIN = 2;
+    public static final int DRIVER = 3;
+    public static final int PASSENGER = 4;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

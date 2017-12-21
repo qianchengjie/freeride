@@ -1,6 +1,7 @@
 package com.hdu.freeride.handle;
 
 import com.hdu.freeride.entity.Result;
+import com.hdu.freeride.exception.MyException;
 import com.hdu.freeride.util.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,11 @@ public class ExceptionHandle extends RuntimeException{
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result handle(Exception e) {
+        if (e instanceof MyException) {
+            MyException myException = (MyException) e;
+            logger.error("【自定义异常】", e);
+            return ResultUtil.error(myException.getMessage());
+        }
         logger.error("【系统异常】", e);
         return ResultUtil.error();
     }

@@ -1,6 +1,9 @@
 package com.hdu.freeride.service;
 
+import com.hdu.freeride.entity.Role;
 import com.hdu.freeride.entity.User;
+import com.hdu.freeride.entity.UserRoleRelation;
+import com.hdu.freeride.exception.MyException;
 import com.hdu.freeride.repository.UserRepository;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,14 +33,46 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PermissionsService permissionsService;
+
     /**
      * 用户注册
      * @param user
      * @return
      */
-    public User save(User user) {
+    public User register(User user) {
+        if (user.getPassword().length() > 16 || user.getPassword().length() < 8) {
+            throw new MyException("密码长度为8-16位");
+        } else if (userRepository.findByName(user.getName()) != null) {
+            throw new MyException("用户名已存在");
+        } else if (userRepository.findByPhone(user.getPhone()) != null) {
+            throw new MyException("手机号已存在");
+        }
         user.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm;ss").format(new Date()));
-        return userRepository.save(user);
+
+        String md5Pwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
+        user.setPassword(md5Pwd);
+        user.setHeadImg("default-head-img.png");
+        user = userRepository.save(user);
+
+        permissionsService.addUserRole(user.getId(), Role.PASSENGER);
+        return user;
+    }
+
+    /**
+     * 用户登录
+     * @param name
+     * @param phone
+     * @param password
+     */
+    public User login(String name, String phone, String password) {
+        String md5Pwd = DigestUtils.md5DigestAsHex(password.getBytes());
+        User user = userRepository.findByNameAndPasswordOrPhoneAndPassword(name, md5Pwd, phone, md5Pwd);
+        if (user == null) {
+            throw new MyException("帐号或密码错误！");
+        }
+        return user;
     }
 
     /**
@@ -70,6 +106,9 @@ public class UserService {
      * @param user
      */
     public void update(User user) {
+        if (user.getPassword() != userRepository.findOne(user.getId()).getPassword()) {
+            throw new MyException("修改用户信息失败！");
+        }
         userRepository.save(user);
     }
 

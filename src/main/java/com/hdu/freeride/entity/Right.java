@@ -10,6 +10,13 @@ public class Right {
     private String date;
     private int pId;
 
+
+    private static final int VIEW_RIGHT = 1;
+    private static final int MODIFY_RIGHT = 2;
+    private static final int APP_ALL_RIGHT = 3;
+    private static final int CALL_RIGHT = 4;
+    private static final int TAKE_RIGHT = 5;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

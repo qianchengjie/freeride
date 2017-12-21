@@ -20,7 +20,7 @@
     </properties>
 
     <dependencies>
-        <!--spring框架-->
+        <!-- spring框架 -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -73,7 +73,7 @@
             <version>4.3.8.RELEASE</version>
         </dependency>
 
-        <!--jdbc驱动-->
+        <!-- jdbc驱动 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -81,7 +81,7 @@
         </dependency>
 
 
-        <!--jackson-->
+        <!-- jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -98,7 +98,7 @@
             <version>2.8.3</version>
         </dependency>
 
-        <!--AOP-->
+        <!-- AOP -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
@@ -115,7 +115,7 @@
             <version>4.3.10.RELEASE</version>
         </dependency>
 
-        <!--日志记录-->
+        <!-- 日志记录 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -127,7 +127,7 @@
             <version>1.7.21</version>
         </dependency>
 
-        <!--表单验证-->
+        <!-- 表单验证 -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -146,13 +146,19 @@
             <version>5.0.12.Final</version>
         </dependency>
 
-        <!--单元测试-->
+        <!-- 单元测试 -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
 
+        <!-- 加密 -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
 
     </dependencies>
 

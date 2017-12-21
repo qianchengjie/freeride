@@ -5,19 +5,20 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 public class User {
     private int id;
     @NotNull(message = "用户名不能为空")
-    @Length(max = 8, message = "用户名不能超过8位")
+    @Pattern(regexp = "^.{2,8}$", message = "用户名长度2-8位")
     private String name;
     @NotNull(message = "密码不能为空")
-    @Length(min = 8, max = 16, message = "密码长度8-16位")
-    @Pattern(regexp = "([a-z]|[A-Z]|[0-9])+", message = "密码只能由数字和英文组成")
     private String password;
     private Integer age;
     private String nikeName;
+    @NotNull(message = "手机号不能为空")
+    @Pattern(regexp = "^1[3|4|5|8][0-9]\\d{8}$", message = "请填写正确的手机号")
     private String phone;
     private String personSign;
     private String industry;
@@ -25,6 +26,7 @@ public class User {
     private double purse;
     private byte status;
     private String msg;
+    private String headImg;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -147,6 +149,16 @@ public class User {
         this.msg = msg;
     }
 
+    @Basic
+    @Column(name = "head_img")
+    public String getHeadImg() {
+        return headImg;
+    }
+
+    public void setHeadImg(String headImg) {
+        this.headImg = headImg;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -166,6 +178,7 @@ public class User {
         if (industry != null ? !industry.equals(user.industry) : user.industry != null) return false;
         if (date != null ? !date.equals(user.date) : user.date != null) return false;
         if (msg != null ? !msg.equals(user.msg) : user.msg != null) return false;
+        if (headImg != null ? !headImg.equals(user.headImg) : user.headImg != null) return false;
 
         return true;
     }
@@ -188,5 +201,24 @@ public class User {
         result = 31 * result + (int) status;
         result = 31 * result + (msg != null ? msg.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", age=" + age +
+                ", nikeName='" + nikeName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", personSign='" + personSign + '\'' +
+                ", industry='" + industry + '\'' +
+                ", date='" + date + '\'' +
+                ", purse=" + purse +
+                ", status=" + status +
+                ", msg='" + msg + '\'' +
+                ", headImg='" + headImg + '\'' +
+                '}';
     }
 }
