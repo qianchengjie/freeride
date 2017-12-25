@@ -49,11 +49,12 @@ public class UserService {
         } else if (userRepository.findByPhone(user.getPhone()) != null) {
             throw new MyException("手机号已存在");
         }
-        user.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-
+        user.setDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        user.setLastOnlineTime(user.getDate());
         String md5Pwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
         user.setPassword(md5Pwd);
         user.setHeadImg("default-head-img.png");
+        user.setStatus(0);
         user = userRepository.save(user);
 
         permissionsService.addUserRole(user.getId(), Role.PASSENGER);
@@ -72,6 +73,8 @@ public class UserService {
         if (user == null) {
             throw new MyException("帐号或密码错误！");
         }
+        user.setLastOnlineTime(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+        userRepository.save(user);
         return user;
     }
 

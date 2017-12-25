@@ -78,6 +78,39 @@ public class StrokeService {
     }
 
     /**
+     * 用户取消行程
+     * @param userId
+     * @param roleId
+     * @param strokeId
+     */
+    @Transactional
+    public void cancel(Integer userId, Integer roleId, Integer strokeId) {
+        Stroke stroke = strokeRepository.findOne(strokeId);
+        Integer status = stroke.getStatus();
+        if (status.equals(Stroke.STATUS_CANCEL) || status.equals(Stroke.STATUS_FINISH) || status.equals(Stroke.STATUS_ONWAY)) {
+            throw new MyException("订单无法取消");
+        }
+
+        if (roleId == Role.PASSENGER) {
+            stroke.setStatus(Stroke.STATUS_CANCEL);
+        } else if (roleId == Role.DRIVER) {
+            stroke.setStatus(Stroke.STATUS_TAKING);
+            userRoleStrokeRelationRepository.delete(userRoleStrokeRelationRepository.findByUserIdAndRoleIdAndStrokeId(userId, roleId, strokeId));
+        }
+        strokeRepository.save(stroke);
+    }
+
+    /**
+     * 用户删除行程
+     * @param userId
+     * @param roleId
+     * @param strokeId
+     */
+    public void delete(Integer userId, Integer roleId, Integer strokeId) {
+        userRoleStrokeRelationRepository.delete(userRoleStrokeRelationRepository.findByUserIdAndRoleIdAndStrokeId(userId, roleId, strokeId));
+    }
+
+    /**
      * 通过行程id查找行程信息
      * @param id
      * @return

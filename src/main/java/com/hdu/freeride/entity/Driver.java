@@ -22,7 +22,6 @@ public class Driver {
     @NotNull
     @Pattern(regexp = "^.{2,8}$", message = "姓名长度2-8位")
     private String name;
-    @NotNull
     private String date;
     @NotNull
     @Column(name = "driver_license")
@@ -43,8 +42,8 @@ public class Driver {
 
     //0未出车，1出车，默认2待审核
     public static final Integer STATUS_STOP = 0;
-    public static final Integer STATUS_START= 0;
-    public static final Integer STATUS_REVIEW = 0;
+    public static final Integer STATUS_START = 1;
+    public static final Integer STATUS_REVIEW = 2;
 
 
     @Override

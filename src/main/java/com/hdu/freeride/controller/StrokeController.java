@@ -3,6 +3,7 @@ package com.hdu.freeride.controller;
 import com.hdu.freeride.service.StrokeService;
 import com.hdu.freeride.util.ResultUtil;
 import com.hdu.freeride.views.StrokeView;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,38 @@ public class StrokeController {
     }
 
     /**
+     * 用户取消行程
+     * @param userId
+     * @param roleId
+     * @param strokeId
+     * @return
+     */
+    @PostMapping("cancel")
+    public Object cancel(Integer userId, Integer roleId, Integer strokeId) {
+        if (userId == null || roleId == null || strokeId == null) {
+            return ResultUtil.error("缺少参数");
+        }
+        strokeService.cancel(userId, roleId, strokeId);
+        return ResultUtil.success();
+    }
+
+    /**
+     * 用户删除行程
+     * @param userId
+     * @param roleId
+     * @param strokeId
+     * @return
+     */
+    @DeleteMapping("delete")
+    public Object delete(Integer userId, Integer roleId, Integer strokeId) {
+        if (userId == null || roleId == null || strokeId == null) {
+            return ResultUtil.error("缺少参数");
+        }
+        strokeService.delete(userId, roleId, strokeId);
+        return ResultUtil.success();
+    }
+
+    /**
      * 分页获取用户的某个角色的行程表
      * @param userId
      * @param roleId
@@ -44,6 +77,9 @@ public class StrokeController {
      */
     @GetMapping("findAll/{pageNum}")
     public Object findAll(Integer userId, Integer roleId, @PathVariable int pageNum) {
+        if (userId == null || roleId == null) {
+            return ResultUtil.error("缺少参数");
+        }
         return ResultUtil.success(strokeService.findAllByUserIdAndRoleId(userId, roleId, pageNum));
     }
 
@@ -55,17 +91,21 @@ public class StrokeController {
     @GetMapping("find")
     public Object find(Integer strokeId) {
         if (strokeId == null) {
-            return ResultUtil.error("行程id不能为空");
+            return ResultUtil.error("缺少参数");
         }
         return ResultUtil.success(strokeService.findOne(strokeId));
     }
 
+    /**
+     * 司机接受订单
+     * @param strokeId
+     * @param userId
+     * @return
+     */
     @PostMapping("strokeTaking")
     public Object find(Integer strokeId, Integer userId) {
-        if (strokeId == null) {
-            return ResultUtil.error("行程id不能为空");
-        } else if (userId == null) {
-            return ResultUtil.error("用户id不能为空");
+        if (userId == null || strokeId == null) {
+            return ResultUtil.error("缺少参数");
         }
         return ResultUtil.success(strokeService.strokeTaking(strokeId, userId));
     }

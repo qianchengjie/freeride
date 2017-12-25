@@ -25,4 +25,6 @@ public interface UserRoleStrokeRelationRepository extends JpaRepository<UserRole
     @Query("select strokeId from UserRoleStrokeRelation where roleId=:roleId")
     public List<Integer> findAllStrokeIdByRoleId(@Param("roleId") int roleId);
 
+    public UserRoleStrokeRelation findByUserIdAndRoleIdAndStrokeId(Integer userId, Integer roleId, Integer strokeId);
+
 }

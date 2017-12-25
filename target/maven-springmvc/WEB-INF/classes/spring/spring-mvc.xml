@@ -30,6 +30,9 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <!-- 支持上传文件-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
 
     <!-- 使用jackjson,默认将返回对象转换为 JSON，如果前面没有在pom文件中添加jackson包的不需要这个配置  -->
     <bean id="stringConverter"

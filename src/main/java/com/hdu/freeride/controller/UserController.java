@@ -93,10 +93,10 @@ public class UserController {
      * @param id
      * @return
      */
-    @GetMapping("/find")
-    public Object find(Integer id) {
+    @GetMapping("/find/{id}")
+    public Object find(@PathVariable Integer id) {
         if (id == null) {
-            return ResultUtil.error("用户id不能为空");
+            return ResultUtil.error("缺少参数");
         }
         return ResultUtil.success(userService.findOne(id));
     }
