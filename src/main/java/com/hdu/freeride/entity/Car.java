@@ -1,6 +1,5 @@
 package com.hdu.freeride.entity;
 
-import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,6 +11,7 @@ import java.util.Objects;
  * Date: 2017/12/25 20:46
  */
 @Entity
+@Table(name = "car")
 public class Car {
 
     @Id

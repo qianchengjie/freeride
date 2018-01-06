@@ -3,10 +3,10 @@ package com.hdu.freeride.entity;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "right")
 public class Right {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
     @Column(name = "right_name")
     private String rightName;

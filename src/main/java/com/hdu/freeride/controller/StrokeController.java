@@ -1,5 +1,7 @@
 package com.hdu.freeride.controller;
 
+import com.hdu.freeride.entity.Role;
+import com.hdu.freeride.entity.Stroke;
 import com.hdu.freeride.service.StrokeService;
 import com.hdu.freeride.util.ResultUtil;
 import com.hdu.freeride.views.StrokeView;
@@ -76,11 +78,8 @@ public class StrokeController {
      * @return
      */
     @GetMapping("findAll/{pageNum}")
-    public Object findAll(Integer userId, Integer roleId, @PathVariable int pageNum) {
-        if (userId == null || roleId == null) {
-            return ResultUtil.error("缺少参数");
-        }
-        return ResultUtil.success(strokeService.findAllByUserIdAndRoleId(userId, roleId, pageNum));
+    public Object findAll(Integer userId, Integer roleId, Integer status, @PathVariable Integer pageNum) {
+        return ResultUtil.success(strokeService.findAllByUserIdAndRoleIdAndStatus(userId, roleId, status, pageNum));
     }
 
     /**
@@ -108,6 +107,43 @@ public class StrokeController {
             return ResultUtil.error("缺少参数");
         }
         return ResultUtil.success(strokeService.strokeTaking(strokeId, userId));
+    }
+
+    /**
+     * 找到所有待接单的行程
+     * @return
+     */
+    @PostMapping("findAllWait/{pageNum}")
+    public Object findAllWait( @PathVariable Integer pageNum) {
+        return strokeService.findAllByUserIdAndRoleIdAndStatus(null, Role.DRIVER, Stroke.STATUS_WAIT, pageNum);
+    }
+
+    /**
+     * 司机开始行程
+     * @param strokeId
+     * @return
+     */
+    @PostMapping("startStroke")
+    public Object startStroke (Integer strokeId) {
+        if (strokeId == null) {
+            return ResultUtil.error("行程不能为空");
+        }
+        strokeService.startStroke(strokeId);
+        return ResultUtil.success();
+    }
+
+    /**
+     * 司机结束行程
+     * @param strokeId
+     * @return
+     */
+    @PostMapping("finishStroke")
+    public Object finishStroke (Integer strokeId) {
+        if (strokeId == null) {
+            return ResultUtil.error("行程不能为空");
+        }
+        strokeService.finishStroke(strokeId);
+        return ResultUtil.success();
     }
 
 

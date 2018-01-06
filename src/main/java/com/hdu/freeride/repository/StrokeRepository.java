@@ -15,4 +15,8 @@ import java.util.List;
 @Repository
 public interface StrokeRepository extends JpaRepository<Stroke, Integer>, JpaSpecificationExecutor<Stroke> {
 
+    public List<Stroke> findAllByStatus(Integer status);
+
+    public Stroke findById(Integer id);
+
 }

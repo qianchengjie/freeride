@@ -111,5 +111,45 @@ public class UserController {
         return ResultUtil.success(userService.findByPhone(phone));
     }
 
+    /**
+     * 用户充值钱包
+     * @param userId
+     * @param price
+     * @return
+     */
+    @PostMapping("/recharge")
+    public Object recharge(Integer userId, double price) {
+        if (userId == null) {
+            return ResultUtil.error("用户id不能为空");
+        }
+        return ResultUtil.success(userService.recharge(userId, price));
+    }
+
+    /**
+     * 用户提现
+     * @param userId
+     * @param price
+     * @return
+     */
+    @PostMapping("/withdrawals")
+    public Object withdrawals(Integer userId, double price) {
+        if (userId == null) {
+            return ResultUtil.error("用户id不能为空");
+        }
+        return ResultUtil.success(userService.withdrawals(userId, price));
+    }
+
+    /**
+     * 分页查找交易明细
+     * @param userId
+     * @param type
+     * @param pageNum
+     * @return
+     */
+    @GetMapping("findAllTD/{pageNum}")
+    public Object findAllTransactionDetial(Integer userId, Integer type,@PathVariable Integer pageNum) {
+        return ResultUtil.success(userService.findAllTransactionDetial(userId, type, pageNum));
+    }
+
 
 }

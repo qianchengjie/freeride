@@ -1,12 +1,9 @@
 package com.hdu.freeride.service;
 
-import com.hdu.freeride.entity.Role;
-import com.hdu.freeride.entity.Stroke;
-import com.hdu.freeride.entity.UserRoleStrokeRelation;
+import com.hdu.freeride.entity.*;
 import com.hdu.freeride.exception.MyException;
 import com.hdu.freeride.handle.ExceptionHandle;
-import com.hdu.freeride.repository.StrokeRepository;
-import com.hdu.freeride.repository.UserRoleStrokeRelationRepository;
+import com.hdu.freeride.repository.*;
 import com.hdu.freeride.views.StrokeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +43,15 @@ public class StrokeService {
 
     @Autowired
     private UserRoleStrokeRelationRepository userRoleStrokeRelationRepository;
+
+    @Autowired
+    private TransactionDetailsRepository transactionDetailsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private DriverRepository driverRepository;
 
     /**
      * 用户发布行程（包括司机和乘客）
@@ -90,11 +96,11 @@ public class StrokeService {
         if (status.equals(Stroke.STATUS_CANCEL) || status.equals(Stroke.STATUS_FINISH) || status.equals(Stroke.STATUS_ONWAY)) {
             throw new MyException("订单无法取消");
         }
-
+        logger.info("roleId={}", roleId);
         if (roleId == Role.PASSENGER) {
             stroke.setStatus(Stroke.STATUS_CANCEL);
         } else if (roleId == Role.DRIVER) {
-            stroke.setStatus(Stroke.STATUS_TAKING);
+            stroke.setStatus(Stroke.STATUS_WAIT);
             userRoleStrokeRelationRepository.delete(userRoleStrokeRelationRepository.findByUserIdAndRoleIdAndStrokeId(userId, roleId, strokeId));
         }
         strokeRepository.save(stroke);
@@ -127,8 +133,11 @@ public class StrokeService {
      * @return
      */
     @Transactional
-    public Page<Stroke> findAllByUserIdAndRoleId(Integer userId, Integer roleId, int pageNum) {
+    public Page<Stroke> findAllByUserIdAndRoleIdAndStatus(Integer userId, Integer roleId, Integer status, Integer pageNum) {
         Pageable pageable = new PageRequest(pageNum-1, ONE_PAGE_SUM, SORT_ID_DESC);
+        if (pageNum == null ) {
+            pageable = new PageRequest(pageNum-1, 999999, SORT_ID_DESC);
+        }
         List<Integer> strokeIds = new ArrayList<Integer>();
         if (userId == null && roleId == null) {
             return strokeRepository.findAll(pageable);
@@ -140,13 +149,26 @@ public class StrokeService {
             strokeIds = userRoleStrokeRelationRepository.findAllStrokeIdByUserIdAndRoleId(userId, roleId);
         }
         List<Integer> finalStrokeIds = strokeIds;
-        Specification<Stroke> specification = new Specification<Stroke>() {
-            @Override
-            public Predicate toPredicate(Root root, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.in(root.get("id")).value(finalStrokeIds);
-            }
-        };
-        return strokeRepository.findAll(specification, pageable);
+        if (finalStrokeIds.size() == 0) {
+            pageable = new PageRequest(9999999, ONE_PAGE_SUM, SORT_ID_DESC);
+            return strokeRepository.findAll(pageable);
+        } else {
+            Specification<Stroke> specification = new Specification<Stroke>() {
+                @Override
+                public Predicate toPredicate(Root root, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                    List<Predicate> list=new ArrayList<Predicate>();
+                    if (status != null) {
+                        list.add(criteriaBuilder.equal(root.get("status").as(Integer.class), status));
+                    }
+                    list.add(criteriaBuilder.in(root.get("id")).value(finalStrokeIds));
+                    criteriaQuery.where(criteriaBuilder.and(list.toArray(new Predicate[list.size()])));
+                    criteriaQuery.distinct(true);
+                    criteriaQuery.orderBy(criteriaBuilder.desc(root.get("id").as(Integer.class)));
+                    return criteriaQuery.getRestriction();
+                }
+            };
+            return strokeRepository.findAll(specification, pageable);
+        }
     }
 
     /**
@@ -169,6 +191,57 @@ public class StrokeService {
         userRoleStrokeRelation.setRoleId(Role.DRIVER);
         userRoleStrokeRelationRepository.save(userRoleStrokeRelation);
         return stroke;
+    }
+
+    /**
+     * 行程在路上
+     * @param strokeId
+     */
+    public void startStroke(Integer strokeId) {
+        Stroke stroke = strokeRepository.findById(strokeId);
+        stroke.setStatus(Stroke.STATUS_ONWAY);
+        strokeRepository.save(stroke);
+    }
+
+    /**
+     * 行程结束并结算
+     * @param strokeId
+     */
+    @Transactional
+    public void finishStroke(Integer strokeId) {
+        Stroke stroke = strokeRepository.findById(strokeId);
+        List<UserRoleStrokeRelation> list = userRoleStrokeRelationRepository.findAllByStrokeId(strokeId);
+        String nowTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        for (UserRoleStrokeRelation item:list) {
+            TransactionDetails transactionDetails = new TransactionDetails();
+            transactionDetails.setDate(nowTime);
+            transactionDetails.setSum(stroke.getPrice());
+            transactionDetails.setStrokeId(strokeId);
+            transactionDetails.setUserId(item.getUserId());
+            User user = userRepository.findOne(item.getUserId());
+            if (item.getRoleId() == Role.DRIVER) {
+                transactionDetails.setType(TransactionDetails.INCOME);
+                transactionDetails.setDescText("完成行程获得" + transactionDetails.getSum() + "元");
+
+                Driver driver = driverRepository.findByUserId(item.getUserId());
+                driver.setAllCount(driver.getAllCount() + 1);
+                driver.setSuccessCount(driver.getSuccessCount() + 1);
+                driver.setIncome(driver.getIncome() + stroke.getPrice());
+                driverRepository.save(driver);
+
+                user.setPurse(user.getPurse() + stroke.getPrice());
+                userRepository.save(user);
+            } else if (item.getRoleId() == Role.PASSENGER) {
+                transactionDetails.setType(TransactionDetails.EXPENDITURE);
+                transactionDetails.setDescText("打车支出" + transactionDetails.getSum() + "元");
+                user.setPurse(user.getPurse() - stroke.getPrice());
+                userRepository.save(user);
+            }
+            transactionDetailsRepository.save(transactionDetails);
+        }
+        stroke.setStatus(Stroke.STATUS_FINISH);
+        stroke.setFinishTime(nowTime);
+        strokeRepository.save(stroke);
     }
 
 }

@@ -12,6 +12,7 @@ import java.util.Objects;
  * Date: 2017/12/21 23:36
  */
 @Entity
+@Table(name = "driver")
 public class Driver {
 
     @Id

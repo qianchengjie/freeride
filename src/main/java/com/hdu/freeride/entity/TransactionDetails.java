@@ -7,16 +7,28 @@ import javax.persistence.*;
 public class TransactionDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
+
     private double sum;
+
     @Column(name = "user_id")
     private int userId;
+
     @Column(name = "stroke_id")
     private Integer strokeId;
-    private String desc;
+
+    @Column(name = "desc_text")
+    private String descText;
+
     private String date;
+    //0支出，1收入，2转入，3提现
     private Integer type;
+
+    public final static Integer EXPENDITURE = 0;
+    public final static Integer INCOME = 1;
+    public final static Integer CHANGE_INTO = 2;
+    public final static Integer WITHDRAWALS = 3;
+
 
     public int getId() {
         return id;
@@ -50,12 +62,12 @@ public class TransactionDetails {
         this.strokeId = strokeId;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescText() {
+        return descText;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescText(String descText) {
+        this.descText = descText;
     }
 
     public String getDate() {
@@ -86,7 +98,7 @@ public class TransactionDetails {
         if (userId != that.userId) return false;
         if (type != null ? !type.equals(that.type) : that.type != null) return false;
         if (strokeId != null ? !strokeId.equals(that.strokeId) : that.strokeId != null) return false;
-        if (desc != null ? !desc.equals(that.desc) : that.desc != null) return false;
+        if (descText != null ? !descText.equals(that.descText) : that.descText != null) return false;
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
 
         return true;
@@ -101,9 +113,22 @@ public class TransactionDetails {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + userId;
         result = 31 * result + (strokeId != null ? strokeId.hashCode() : 0);
-        result = 31 * result + (desc != null ? desc.hashCode() : 0);
+        result = 31 * result + (descText != null ? descText.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "TransactionDetails{" +
+                "id=" + id +
+                ", sum=" + sum +
+                ", userId=" + userId +
+                ", strokeId=" + strokeId +
+                ", descText='" + descText + '\'' +
+                ", date='" + date + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

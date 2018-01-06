@@ -34,8 +34,8 @@ public class DriverService {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpAspect.class);
 
-    private static final String DRIVER_LICENSE_PATH = "images" + File.separator + "driverLicense" + File.separator;
-    private static final String DRIVING_LICENSE_PATH = "images" + File.separator + "drivingLicense" + File.separator;
+    private static final String DRIVER_LICENSE_PATH = "images" + File.separator + "driverlicense" + File.separator;
+    private static final String DRIVING_LICENSE_PATH = "images" + File.separator + "drivinglicense" + File.separator;
 
     @Autowired
     private DriverRepository driverRepository;
@@ -85,7 +85,7 @@ public class DriverService {
      */
     @Transactional
     public DriverView applyDriver(DriverView driverView) {
-        if (!isDriver(driverView.getUserId())) {
+        if (isDriver(driverView.getUserId())) {
             throw new MyException("已经申请为司机");
         }
         if (carRepository.findByVehicleCode(driverView.getVehicleCode()) != null) {
@@ -98,7 +98,11 @@ public class DriverService {
         driver.setDriverLicense(driverView.getDriverLicense());
         driver.setDrivingLicense(driverView.getDrivingLicense());
         driver.setDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-        driver.setStatus(Driver.STATUS_REVIEW);
+//        driver.setStatus(Driver.STATUS_REVIEW);
+        driver.setStatus(Driver.STATUS_STOP);
+        driver.setSuccessCount(0);
+        driver.setAllCount(0);
+        driver.setFailCount(0);
         driver = driverRepository.save(driver);
 
         Car car = new Car();
@@ -130,8 +134,9 @@ public class DriverService {
      * @param req
      */
     public String uploadDriverLicense(MultipartFile file, HttpServletRequest req) {
-        String filePath = req.getServletContext().getRealPath("") + DRIVER_LICENSE_PATH;
-        filePath = "C:\\Users\\33061\\Desktop\\freeride\\freeride\\" + DRIVER_LICENSE_PATH;
+        String realPath = req.getServletContext().getRealPath("");
+        realPath = realPath.substring(0, realPath.length()-1);
+        String filePath = realPath.substring(0, realPath.lastIndexOf(File.separator) + 1) + DRIVER_LICENSE_PATH;
         return FileUtil.upload(file, filePath);
     }
 
@@ -142,8 +147,9 @@ public class DriverService {
      * @return
      */
     public String uploadDrivingLicense(MultipartFile file, HttpServletRequest req) {
-        String filePath = req.getServletContext().getRealPath("") + DRIVING_LICENSE_PATH;
-        filePath = "C:\\Users\\33061\\Desktop\\freeride\\freeride\\" + DRIVING_LICENSE_PATH;
+        String realPath = req.getServletContext().getRealPath("");
+        realPath = realPath.substring(0, realPath.length()-1);
+        String filePath = realPath.substring(0, realPath.lastIndexOf(File.separator) + 1) + DRIVING_LICENSE_PATH;
         return FileUtil.upload(file, filePath);
     }
 

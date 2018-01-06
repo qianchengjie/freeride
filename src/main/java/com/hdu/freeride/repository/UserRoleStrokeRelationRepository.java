@@ -27,4 +27,7 @@ public interface UserRoleStrokeRelationRepository extends JpaRepository<UserRole
 
     public UserRoleStrokeRelation findByUserIdAndRoleIdAndStrokeId(Integer userId, Integer roleId, Integer strokeId);
 
+
+    public List<UserRoleStrokeRelation> findAllByStrokeId(Integer strokeId);
+
 }

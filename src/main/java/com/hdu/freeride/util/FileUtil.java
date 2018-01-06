@@ -39,6 +39,6 @@ public class FileUtil {
         } else {
             throw new MyException("上传失败，因为文件是空的");
         }
-        return filePath + fileName;
+        return fileName;
     }
 }

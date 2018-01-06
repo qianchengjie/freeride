@@ -22,11 +22,13 @@
     <!--启动面向切面配置-->
     <aop:aspectj-autoproxy/>
 
+    <!--静态资源-->
+    <mvc:resources mapping="/static/**" location="classpath:/static/" />
+
     <!-- 对模型视图名称的解析，即在模型视图名称添加前后缀(如果最后一个还是表示文件夹,则最后的斜杠不要漏了) 使用JSP-->
     <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
     <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="prefix" value="WEB-INF/views/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 

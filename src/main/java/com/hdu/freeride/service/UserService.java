@@ -1,9 +1,8 @@
 package com.hdu.freeride.service;
 
-import com.hdu.freeride.entity.Role;
-import com.hdu.freeride.entity.User;
-import com.hdu.freeride.entity.UserRoleRelation;
+import com.hdu.freeride.entity.*;
 import com.hdu.freeride.exception.MyException;
+import com.hdu.freeride.repository.TransactionDetailsRepository;
 import com.hdu.freeride.repository.UserRepository;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +10,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +41,9 @@ public class UserService {
     @Autowired
     private PermissionsService permissionsService;
 
+    @Autowired
+    private TransactionDetailsRepository transactionDetailsRepository;
+
     /**
      * 用户注册
      * @param user
@@ -53,6 +61,7 @@ public class UserService {
         user.setLastOnlineTime(user.getDate());
         String md5Pwd = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
         user.setPassword(md5Pwd);
+        user.setNikeName(user.getName());
         user.setHeadImg("default-head-img.png");
         user.setStatus(0);
         user = userRepository.save(user);
@@ -126,6 +135,74 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
+    /**
+     * 用户充值钱包
+     * @param userId
+     * @param price
+     */
+    @Transactional
+    public TransactionDetails recharge(Integer userId, double price) {
+        User user = userRepository.findOne(userId);
+        user.setPurse(user.getPurse() + price);
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        transactionDetails.setSum(price);
+        transactionDetails.setUserId(userId);
+        transactionDetails.setType(TransactionDetails.CHANGE_INTO);
+        transactionDetails.setDescText("充值钱包" + transactionDetails.getSum() + "元");
+        userRepository.save(user);
+        return transactionDetailsRepository.save(transactionDetails);
+    }
 
+    /**
+     * 用户提现
+     * @param userId
+     * @param price
+     */
+    @Transactional
+    public TransactionDetails withdrawals(Integer userId, double price) {
+        User user = userRepository.findOne(userId);
+        if (user.getPurse() < price) {
+            throw new MyException("余额不足，提现失败！");
+        }
+        user.setPurse(user.getPurse() - price);
+        TransactionDetails transactionDetails = new TransactionDetails();
+        transactionDetails.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        transactionDetails.setSum(price);
+        transactionDetails.setUserId(userId);
+        transactionDetails.setType(TransactionDetails.WITHDRAWALS);
+        transactionDetails.setDescText("提现" + transactionDetails.getSum() + "元");
+        userRepository.save(user);
+        return transactionDetailsRepository.save(transactionDetails);
+    }
+
+    /**
+     * 分页查找交易明细
+     * @param userId
+     * @param pageNum
+     * @param type
+     * @return
+     */
+    public Page<TransactionDetails> findAllTransactionDetial (Integer userId, Integer type, Integer pageNum) {
+        Sort sort =  new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(pageNum - 1, ONE_PAGE_SUM , sort);
+        Specification<TransactionDetails> specification = new Specification<TransactionDetails>() {
+            @Override
+            public Predicate toPredicate(Root root, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list=new ArrayList<Predicate>();
+                if (type != null) {
+                    list.add(criteriaBuilder.equal(root.get("type").as(Integer.class), type));
+                }
+                if (userId != null) {
+                    list.add(criteriaBuilder.equal(root.get("userId").as(Integer.class), userId));
+                }
+                criteriaQuery.where(criteriaBuilder.and(list.toArray(new Predicate[list.size()])));
+                criteriaQuery.distinct(false);
+                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("id").as(Integer.class)));
+                return criteriaQuery.getRestriction();
+            }
+        };
+        return transactionDetailsRepository.findAll(specification, pageable);
+    }
 
 }
